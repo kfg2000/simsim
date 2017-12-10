@@ -3,10 +3,70 @@
 
 {% block content %}	
 
-<form action="{% url 'simsim:create' %}" method="POST">
+<form action="{% url 'simsim:create' %}" method="POST" onchange="update_price()">
 	{% csrf_token %}
 	{{form|crispy}}
+
+	<h3>Total:<span id="total">0.250</span> KWD</h3>
 	<input class="btn btn-success" type='submit' value='Make a delicious cup! You deserve it :)'>
 </form>
+
+<script>
+	function update_price(){
+		var shots = document.getElementById("id_espresso_shot").value;
+		
+		var bean = document.getElementById("id_bean");
+		var bean_id = bean[bean.selectedIndex].value;
+		var roast = document.getElementById("id_roast");
+		var roast_id = roast[roast.selectedIndex].value;
+
+		var syrup = document.getElementById("id_syrups");
+		syrups = [];
+
+		for(var i = 0; i < syrup.length; i++){
+			if(syrup.options[i].selected){
+				syrups.push(syrup.options[i].value)
+			}
+		}
+
+		var powder = document.getElementById("id_powders");
+		powders = [];
+
+		for(var i = 0; i < powder.length; i++){
+			if(powder.options[i].selected){
+				powders.push(powder.options[i].value)
+			}
+		}
+
+		var milk = document.getElementById('id_steamed_milk');
+		var milk_value = milk.checked;
+
+		$.ajax({
+			type: "GET",
+			url: "{% url "simsim:price" %}",
+
+			data: {
+				bean: bean_id,
+				roast: roast_id,
+				shot: shots,
+				syrups: JSON.stringify(syrups),
+				powders: JSON.stringify(powders),
+				milk: milk_value
+			},
+
+			error: function(){
+				console.log("ERROR ERROR ERROR");
+			},
+
+			success: function(data){
+				document.getElementById('total').innerHTML=data;
+			}
+
+		});
+
+
+	}
+
+</script>
 
 {% endblock content %}
