@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+  <h1 class="display-3">Hello {{user.username}}!</h1>
+  <p class="lead">This is a list page with all of your created coffee drinks! Enjoy :)</p>
+  <hr class="my-4">
+  <p>Create more coffees :D</p>
+  <p class="lead">
+    <a class="btn btn-primary btn-lg" href="{% url 'simsim:create' %}" role="button">Create</a>
+  </p>
+</div>
+<h2>User Created Coffees:</h2>
+    <div class="row">
+        {% for coffee in list %}
+        <div class="col-sm-4">
+            <div class="thumbnail">
+                <div class="caption">
+                    <h3>Coffee: {{coffee.name}}</h3>
+                    <p>Price: {{coffee.price}} KD</p>
+                        
+                    <a href="{% url 'simsim:detail' coffee_id=coffee.id %}"><i class="fa fa-coffee" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

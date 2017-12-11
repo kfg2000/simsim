@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}	
+	{% csrf_token %}
+	{{form|crispy}}
+
+		<h2>Apply now!</h2>
+
+		<form action="mailto:kfg200@live.com" method="POST" enctype="text/plain">
+			<h3>Name:<br></h3>
+			<input type="text" name="name"><br>
+
+			<h3>username: {{username}}<br></h3>
+
+			<h3>ID: {{id}}<br></h3>
+
+			<h3>Email:<br></h3>
+			<input type="text" name="email"><br>
+
+			<h3>Why did you decide to become a chef? What other back-of-the-house positions have you previously held?</h3><br>
+			<input type="text" name="Why did you decide to become a chef? What other back-of-the-house positions have you previously held? " size="100"><br>
+
+			<h3>Did you go to culinary school? What credentials did you earn through your culinary studies?</h3><br>
+			<input type="text" name="Did you go to culinary school? What credentials did you earn through your culinary studies? " size="100"><br>
+
+			<h3>Do you have a sense of humor?</h3><br>
+			<input type="text" name="Do you have a sense of humor? " size="100"><br> <br>
+
+			
+
+			<input class="btn btn-success" type='submit' value='Apply'>
+		</form>
+
+
+{% endblock content %}

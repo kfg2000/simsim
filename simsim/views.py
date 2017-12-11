@@ -5,6 +5,8 @@ from decimal import Decimal
 from .models import Bean, Roast, Syrup, Powder, Coffee
 from django.http import JsonResponse
 import json 
+from django.http import Http404
+
 
 def usersignup(request):
 	context = {}
@@ -17,13 +19,14 @@ def usersignup(request):
 			user = form.save()
 			username = user.username
 			password = user.password
+			email = user.email
 
 			user.set_password(password)
 			user.save()
 
 			auth_user = authenticate(username=username,password=password)
 			login(request, user)
-			return redirect('/')
+			return redirect('simsim:list')
 		return redirect('simsim:signup')
 	return render(request,'signup.html',context)
 
@@ -42,7 +45,7 @@ def userlogin(request):
 
 			if user is not None:
 				login(request, user)
-				return redirect('/')
+				return redirect('simsim:list')
 			return redirect("simsim:login")
 		return redirect("simsim:login")
 	return render(request,'login.html',context)
@@ -83,7 +86,7 @@ def create_coffee(request):
 			form.save_m2m()
 			coffee.price = coffee_price(coffee)
 			coffee.save()
-			return redirect('/')
+			return redirect('simsim:list')
 
 	context["form"]= form
 	return render(request, 'create_coffee.html', context)
@@ -120,5 +123,41 @@ def price(request):
 
 
 	return JsonResponse(round(total,3), safe=False)
+
+def application(request):
+	user = request.user
+
+	context = {
+	'username': user.username,
+	'id': user.id,
+	}
+
+	return render(request,'app.html',context)
+
+def list(request):
+	if not request.user.is_authenticated:
+		return redirect('simsim:login')
+
+	coffee_list = Coffee.objects.filter(user=request.user)
+	return render(request, 'list.html', {'list': coffee_list, 'user':request.user})
+
+def detail(request, coffee_id):
+	if not request.user.is_authenticated:
+		return redirect('simsim:login')
+
+	coffee = Coffee.objects.get(id=coffee_id)
+	if not (request.user == coffee.user or request.user.is_superuser or request.user.is_staff):
+		raise Http404
+
+	context = {
+	'coffee': coffee,
+	}
+
+	return render(request, 'detail.html', context)
+
+
+
+
+
 
 
